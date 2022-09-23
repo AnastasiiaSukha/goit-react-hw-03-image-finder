@@ -84,36 +84,26 @@ export default class App extends Component {
   
 
   render() {
-    const { pictures, status, error, imageLink} = this.state;
-    const lastPictures = (pictures.length / quantityPerPage) < 1;
+    const { pictures, status, error, imageLink, page} = this.state;
+    const lastPictures = (pictures.length / quantityPerPage) < page;
 
 
-    if (status === 'idle') {
-      return <Searchbar onSubmit={this.handleSubmit} />
-    }
-    
-    if (status === 'pending') {
-      return <Loader/>
-    }
- 
-    if (status === 'rejected') {
-      return console.log(error)
-    }
-
-    if (status === 'resolved') {
-      return (<Container>
-        <Searchbar onSubmit={this.handleSubmit}/>
-        <ImageGallery pictures={pictures} openModal={this.showModal} />
-        {!lastPictures && (<Button onLoadMore={this.loadMore}/>)}
+    return (
+      <Container>
+        <Searchbar onSubmit={this.handleSubmit} />
+        {status === 'pending' && <Loader />}
+        {status === 'rejected' && console.log(error)}
+        {pictures.length > 0 && (<ImageGallery pictures={pictures} openModal={this.showModal} />)}
         {imageLink &&(<Modal onClose={this.closeModal}>
           <img src={imageLink} alt={imageLink} />
         </Modal>)}
+        {status === 'resolved'&& !lastPictures && (<Button onLoadMore={this.loadMore}/>)}
         <ToastContainer
         position="top-center"/>
+
       </Container>
-        
-      );
-    }
+    )
+
 
   }
 
